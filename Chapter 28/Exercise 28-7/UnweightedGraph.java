@@ -26,54 +26,58 @@ public class UnweightedGraph<V> implements Graph<V> {
   }
   
   public List<Integer> getACycle() { 
-	  List<V> allVertices = new ArrayList<>(); //create a list with all the vertices
+	  List<Integer> allVertices = new ArrayList<>(); //create a list with all the vertices
 	  for (int i = 0; i < vertices.size(); i++) {
-		  allVertices.add(vertices.get(i));
+		  allVertices.add(i);
 	  }
 	  Boolean[] visited = new Boolean[allVertices.size()]; //create a boolean array to determine if a vertex has been visited (false by default)
-	  int[] parents = new int[allVertices.size()]; //create an int array to determine parent of vertex (-1 by default)
+	  for (int i = 0; i < visited.length; i++) {
+		  visited[i] = false;
+	  }
+	  int[] parents = new int[vertices.size()]; //create an int array to determine parent of vertex (-1 by default)
 	  for (int i = 0; i < parents.length; i++) {
 		  parents[i] = -1;
 	  }
 	  while (allVertices.size() != 0) { // check list size for this 
-		  V v = allVertices.get(0); //pick one, say v; 
-		  Stack<V> stack = new Stack<V>(); //create stack;
-		  stack.add(v); //push v to the stack; 
-		  visited[0] = true; //mark v visited; 
-		  allVertices.remove(0); //remove v from list with all vertices;
-		  while (stack.size != 0) { 
-			  V x = stack.peek(); //peek a vertex from the stack, say x; 
-			  if () { //if (x has no neighbors) {
-	                pop a vertex from the stack;
-	            }
-	            else {
-	                loop through all neighbors of x with loop variable i {
-	                   Let e be the edge between x and the neighbor; 
-	                   if (ending vertex of e (e.v) is not visited) { 
-	                       parent[e.v] = x; 
-	                       push e.v onto the stack; 
-	                       mark e.v visited; 
-	                       remove e.v from list with all vertices;
-	                       remove loop variable i from x's neighbor list;
-	                       break;
-	                   } 
-	                   else if (e.v is not x's parent) {
-	                       create an Integer ArrayList;
-	                       add e.v to list;
-	                       while (x != e.v and x != -1) {
-	                           add x to list;
-	                           x is parent of x;
-	                       }
-	                       return list;
-	                   }
-	                   else { 
-	                       remove loop variable i from list with neighbors;
+		  int v = allVertices.get(0); //pick one, say v; 
+		  Stack<Integer> stack = new Stack<>(); //create stack;
+		  stack.push(v); //push v to the stack; 
+		  visited[v] = true; //mark v visited; 
+		  allVertices.remove(new Integer(v)); //remove v from list with all vertices;
+		  while (!stack.isEmpty()) { 
+			  int x = stack.peek(); //peek a vertex from the stack, say x; 
+			  if (neighbors.get(x).size() == 0) { //if (x has no neighbors) {
+				  stack.pop(); //pop a vertex from the stack;
+			  }
+			  else {
+				  for (int i = 0; i < neighbors.get(x).size(); i++) { //loop through all neighbors of x with loop variable i {
+					  Edge e = neighbors.get(x).get(i); //Let e be the edge between x and the neighbor; 
+					  if (!visited[e.v]) { //if (ending vertex of e (e.v) is not visited) { 
+						  parents[e.v] = x; //parent[e.v] = x; 
+	                      stack.push(e.v); //push e.v onto the stack; 
+	                      visited[e.v] = true; //mark e.v visited; 
+	                      allVertices.remove(new Integer(e.v)); //remove e.v from list with all vertices;
+	                      neighbors.get(x).remove(i); //remove loop variable i from x's neighbor list;
+	                      break;
+					  } 
+					  else if (e.v != parents[x]) { //else if (e.v is not x's parent) {
+	                      ArrayList<Integer> intList = new ArrayList<>(); //create an Integer ArrayList;
+	                      intList.add(e.v); //add e.v to list;
+	                      while (x != e.v && x != -1) { //while (x != e.v and x != -1) {
+	                    	  intList.add(x); //add x to list;
+	                          x = parents[x]; //x is parent of x;
+	                      }
+	                      return intList;
+					  }
+	                  else { 
+	                      neighbors.get(x).remove(i); //remove loop variable i from list with neighbors;
 	                   }
 	               }   
 	           } 
 	       }
 	    }
-	    return an empty list;
+	  ArrayList<Integer> emptyList = new ArrayList<>();
+	  return emptyList; //return an empty list;
 	}
 
   /** Construct a graph for integer vertices 0, 1, 2 and edge list */
